@@ -1,0 +1,157 @@
+
+2x2_KeyPad_Sample.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000c4  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000118  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000118  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000148  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000184  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000005fc  00000000  00000000  000001a4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 0000056c  00000000  00000000  000007a0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   0000024c  00000000  00000000  00000d0c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  00000f58  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000332  00000000  00000000  00000f7c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000066  00000000  00000000  000012ae  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000010  00000000  00000000  00001314  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 60 00 	jmp	0xc0	; 0xc0 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#include <util/delay.h>
+
+int main()
+{
+	uint8_t kp;
+	DDRB = 0xff; //PortB all pins as OUTPUTS for LEDs
+  6c:	8f ef       	ldi	r24, 0xFF	; 255
+  6e:	87 bb       	out	0x17, r24	; 23
+	//PORTB &= ~(1<<0);	//
+	DDRC = 0b00001100;	//Make 
+  70:	8c e0       	ldi	r24, 0x0C	; 12
+  72:	84 bb       	out	0x14, r24	; 20
+	DDRC &= ~((1<<0)|(1<<1));	 //Make the PC0, PC1 pins as INPUTS for ROWS1,2
+  74:	84 b3       	in	r24, 0x14	; 20
+  76:	8c 7f       	andi	r24, 0xFC	; 252
+  78:	84 bb       	out	0x14, r24	; 20
+	DDRC |= ((1<<2)|(1<<3)); //Make the PC2,PC3 pins as OUTPUTS for COLUMNS1,2
+  7a:	84 b3       	in	r24, 0x14	; 20
+  7c:	8c 60       	ori	r24, 0x0C	; 12
+  7e:	84 bb       	out	0x14, r24	; 20
+	
+	while (1)
+	{
+		PORTC &= ~(1<<2);
+  80:	aa 98       	cbi	0x15, 2	; 21
+		PORTC |= (1<<3);
+  82:	ab 9a       	sbi	0x15, 3	; 21
+		kp = (PINC & 0x03);
+  84:	83 b3       	in	r24, 0x13	; 19
+  86:	83 70       	andi	r24, 0x03	; 3
+		//if((PINC & (1<<0))==0)
+		if(kp==0x02)
+  88:	82 30       	cpi	r24, 0x02	; 2
+  8a:	11 f4       	brne	.+4      	; 0x90 <main+0x24>
+		PORTB |= (1<<0);
+  8c:	c0 9a       	sbi	0x18, 0	; 24
+  8e:	03 c0       	rjmp	.+6      	; 0x96 <main+0x2a>
+		else
+		if(kp==0x01)
+  90:	81 30       	cpi	r24, 0x01	; 1
+  92:	09 f4       	brne	.+2      	; 0x96 <main+0x2a>
+		PORTB |= (1<<2);
+  94:	c2 9a       	sbi	0x18, 2	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  96:	2f ef       	ldi	r18, 0xFF	; 255
+  98:	81 ee       	ldi	r24, 0xE1	; 225
+  9a:	94 e0       	ldi	r25, 0x04	; 4
+  9c:	21 50       	subi	r18, 0x01	; 1
+  9e:	80 40       	sbci	r24, 0x00	; 0
+  a0:	90 40       	sbci	r25, 0x00	; 0
+  a2:	e1 f7       	brne	.-8      	; 0x9c <main+0x30>
+  a4:	00 c0       	rjmp	.+0      	; 0xa6 <main+0x3a>
+  a6:	00 00       	nop
+		else;
+		
+		_delay_ms(200);
+		
+		PORTC &= ~(1<<3);
+  a8:	ab 98       	cbi	0x15, 3	; 21
+		PORTC |= (1<<2);
+  aa:	aa 9a       	sbi	0x15, 2	; 21
+		kp = (PINC & 0x03);
+  ac:	83 b3       	in	r24, 0x13	; 19
+  ae:	83 70       	andi	r24, 0x03	; 3
+		if(kp == 0x02)
+  b0:	82 30       	cpi	r24, 0x02	; 2
+  b2:	11 f4       	brne	.+4      	; 0xb8 <main+0x4c>
+		PORTB |= (1<<1);
+  b4:	c1 9a       	sbi	0x18, 1	; 24
+  b6:	e4 cf       	rjmp	.-56     	; 0x80 <main+0x14>
+		else
+		if(kp == 0x01)
+  b8:	81 30       	cpi	r24, 0x01	; 1
+  ba:	11 f7       	brne	.-60     	; 0x80 <main+0x14>
+		PORTB |= (1<<3);
+  bc:	c3 9a       	sbi	0x18, 3	; 24
+  be:	e0 cf       	rjmp	.-64     	; 0x80 <main+0x14>
+
+000000c0 <_exit>:
+  c0:	f8 94       	cli
+
+000000c2 <__stop_program>:
+  c2:	ff cf       	rjmp	.-2      	; 0xc2 <__stop_program>
